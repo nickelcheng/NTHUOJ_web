@@ -54,7 +54,7 @@ def get_running_contest(request, group_id):
         if contest.start_time < now and contest.end_time > now:
             all_running_contest_list.append(contest)
 
-    return render(
+    return render_index(
         request, 'group/viewall.html', {
             'data_list': all_running_contest_list, 
             'title': 'running contest',
@@ -72,7 +72,7 @@ def get_ended_contest(request, group_id):
         if contest.end_time < now:
             all_ended_contest_list.append(contest)
 
-    return render(
+    return render_index(
         request, 'group/viewall.html', {
             'data_list': all_ended_contest_list, 
             'title': 'ended contest',
@@ -83,7 +83,7 @@ def get_all_announce(request, group_id):
     group = get_group(group_id)
 
     all_announce_list = group.announce.all()
-    return render(
+    return render_index(
         request, 'group/viewall.html', {
             'data_list': all_announce_list, 
             'title': 'announce',
@@ -122,7 +122,7 @@ def detail(request, group_id):
         # If page is out of range (e.g. 9999), deliver last page of results.
         student_list = paginator.page(paginator.num_pages)
 
-    return render(
+    return render_index(
         request, 'group/groupDetail.html', {
             'rc_list': running_contest_list[0:show_number], 
             'ec_list': ended_contest_list[0:show_number],

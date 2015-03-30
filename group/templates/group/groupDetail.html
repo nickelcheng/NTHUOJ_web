@@ -32,7 +32,7 @@ SOFTWARE.
   <div class="row-fluid">
     <a href="{% url 'group:list' %}" class="btn btn-sm btn-default" 
        data-toggle="modal" style="float:left, margin-right:5px">
-      return
+      Return
     </a>
     {% if user_is_owner %}
     <a href="{% url 'group:edit' group_id %}">
@@ -204,31 +204,41 @@ SOFTWARE.
         </tr>
       </thead>
       <tbody>
-        {% for annowence in an_list %}
+        {% for announce in an_list %}
         <tr>
-          <td>{{ annowence.title|truncatechars:25 }}</td>
-          <td>{{ annowence.content|truncatechars:70 }}</td>
+          <td>{{ announce.title|truncatechars:25 }}</td>
+          <td>{{ announce.content|truncatechars:70 }}</td>
           <td>
             <a href="" class="btn btn-sm btn-default" data-toggle="modal" 
-               data-target="#annowenceContentModal{{annowence.id}}" 
+               data-target="#annowenceContentModal{{announce.id}}" 
                style="float:right">Detail</a>
             <!--1. Modal for Annowence Detail button-->
-            <div class="modal fade" id="annowenceContentModal{{annowence.id}}" 
+            <div class="modal fade" id="annowenceContentModal{{announce.id}}" 
                  role="dialog" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
                     <button type="btn-default" class="close" data-dismiss="modal" 
                             aria-hidden="true">&times;</button>
-                    <h5 class="modal-title" title="{{annowence.title}}">
-                      {{annowence.title|truncatechars:42}}
+                    <h5 class="modal-title" title="{{announce.title}}">
+                      {{announce.title|truncatechars:42}}
                     </h5>
                   <div class="modal-body">
-                    <p style="word-wrap:break-word">{{ annowence.content }}</p>
+                    <p style="word-wrap:break-word">{{ announce.content }}</p>
                   </div>
                   <div class="modal-footer">
+                    <div class="col-lg-offset-8 col-lg-1">
+                    {% if user_is_owner %}
+                      <a href="{% url 'group:delete_announce' announce.id group_id %}">
+                      <button type="button" class="btn btn-danger btn-default">Delete
+                      </button>
+                      </a>
+                    {% endif %}
+                    </div>
+                    <div class="col-lg-offset-1 col-lg-1">
                     <button type="button" class="btn btn-default" data-dismiss="modal">
                       Close</button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -280,7 +290,7 @@ SOFTWARE.
         </tr>
       </thead>
       <tbody>
-        {% for student in s_list %}
+        {% for student in student_list %}
         <tr>
           <td>{{ student.username }}</td>
           {% if student.email == "" %}
@@ -291,7 +301,7 @@ SOFTWARE.
           <td>{{ student.user_level }}</td>
           <td>
             {% if user_is_owner %}
-              <a href=".">
+              <a href="{% url 'group:delete_member' group_id student.username %}">
                 <button type="button" class="btn btn-danger btn-xs" style="float:right">
                   <span class="glyphicon glyphicon-remove"></span>
                 </button>
@@ -304,6 +314,27 @@ SOFTWARE.
     </table>
   </div>
   <hr>
+  <div class="container-fluid">
+    <ul class="pager">
+    <span class="step-links">
+      {% if student_list.has_previous %}
+        <li class="previous">
+          <a href="?page={{ student_list.previous_page_number }}">← Previous</a>
+        </li>
+       {% endif %}
+
+      <span class="current">
+        Page {{ student_list.number }} of {{ student_list.paginator.num_pages }}.
+      </span>
+
+      {% if student_list.has_next %}
+        <li class="next">
+          <a href="?page={{ student_list.next_page_number }}">Next →</a>
+        </li>
+      {% endif %}
+    </span>
+    </ul>
+  </div>
   <!--Modal Section-->
   <!--1. Modal for Downloading student data-->
   <div class="modal fade" id="studentDataDownloadModal" role="dialog" aria-hidden="true">
@@ -315,7 +346,7 @@ SOFTWARE.
           <h4 class="modal-title">Download data</h4>
         </div>
         <div class="modal-body">
-          <p>do something</p>
+          <p>Not avalible now</p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">

@@ -1,0 +1,54 @@
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>#</th>
+      <th>Name</th>
+      <th>Owner/TA</th>
+      <th>Group Description</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for group in group_list %}
+    <tr>
+      <td>{{ group.id }}</td>
+      <td>
+        <a href="{% url 'group:detail' group.id %}">{{ group.gname }}</a>
+      </td>
+      <td>{{ group.owner }}</td>
+      <td>{{ group.description|truncatechars:70 }}</td>
+      <td>
+      {% if user.has_judge_auth %}
+        <a href="{% url 'group:delete' group.id %}">
+            <button type="button" class="btn btn-danger btn-xs" style="float:right">
+              <span class="glyphicon glyphicon-remove"></span>
+            </button>
+          </a>
+      {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="container-fluid">
+  <ul class="pager">
+    <span class="step-links">
+      {% if group_list.has_previous %}
+        <li class="previous">
+          <a href="?page={{ group_list.previous_page_number }}">← Previous</a>
+        </li>
+      {% endif %}
+
+      <span class="current">
+        Page {{ group_list.number }} of {{ group_list.paginator.num_pages }}.
+      </span>
+
+      {% if group_list.has_next %}
+        <li class="next">
+          <a href="?page={{ group_list.next_page_number }}">Next →</a>
+        </li>
+      {% endif %}
+    </span>
+  </ul>
+</div>

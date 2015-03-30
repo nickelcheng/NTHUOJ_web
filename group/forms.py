@@ -20,8 +20,15 @@
 
 from django import forms
 from group.models import Group, Announce
+from users.models import User
 
 class GroupForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(GroupForm, self).__init__(*args, **kwargs)
+        # access object through self.instance...
+        self.fields['coowner'].queryset = User.objects.exclude(user_level=User.USER)
+        self.fields['owner'].queryset = User.objects.exclude(user_level=User.USER)
+
     class Meta:
         model = Group
         fields = [
@@ -30,18 +37,21 @@ class GroupForm(forms.ModelForm):
             'coowner',
             'member',
             'description',
-            'announce',
             'trace_contest',
         ]
 
 class GroupFormEdit(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(GroupFormEdit, self).__init__(*args, **kwargs)
+        # access object through self.instance...
+        self.fields['coowner'].queryset = User.objects.exclude(user_level=User.USER)
+
     class Meta:
         model = Group
         fields = [
             'coowner',
             'member',
             'description',
-            'announce',
             'trace_contest',
         ]
 

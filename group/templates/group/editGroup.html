@@ -47,9 +47,6 @@ SOFTWARE.
       {% csrf_token %}
       {% for field in form %}
         <div class="panel panel-default">
-          <div class="panel-heading">
-            {{ field.label_tag }}
-          </div>
           <div class="panel-body">
             <div class="fieldWrapper form-group">
               {{ field|bootstrap }}

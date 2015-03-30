@@ -233,7 +233,7 @@ def edit(request, group_id):
             if request.method == 'GET':        
                 group_dic = model_to_dict(group)
                 form = GroupFormEdit(initial = group_dic)
-                return render(request,'group/editGroup.html',{'form':form})
+                return render_index(request,'group/editGroup.html',{'form':form})
             if request.method == 'POST':
                 form = GroupFormEdit(request.POST, instance = group)
                 if form.is_valid(): 

@@ -23,6 +23,9 @@ SOFTWARE.
 -->
 {% extends "index/base.html" %}
 {% load static %} 
+{% block import_source %}
+<link href="{% static 'group/css/group.css' %}" rel="stylesheet">
+{% endblock import_source %} 
 {% block body_block %}
 <br>
 <div class="container-fluid">
@@ -81,6 +84,9 @@ SOFTWARE.
   </div>
   <hr> 
   <div class="contest">
+    <div style="margin-bottom:15px">
+      <h5 style="text-decoration:underline;color:gray">Contest</h5>
+    </div>
     <div class="panel-group" id="accordion">
       <div class="panel panel-success">
         <div class="panel-heading">
@@ -102,13 +108,21 @@ SOFTWARE.
                 {% for running_contest in rc_list %}
                   {% if running_contest.is_homework %}
                     <tr style="background-color:#F1F7EA">
-                      <td>{{ running_contest.cname }}</td>
+                      <td>
+                        <a href="{% url 'contest:contest' running_contest.id %}">
+                          {{ running_contest.cname }}
+                        </a>
+                      </td>
                       <td>{{ running_contest.start_time }}</td>
                       <td>{{ running_contest.end_time }}</td>
                     </tr>
                   {% else %}
                     <tr style="background-color:#E3E8E3">
-                      <td>{{ running_contest.cname }}</td>
+                      <td>
+                        <a href="{% url 'contest:contest' running_contest.id %}">
+                          {{ running_contest.cname }}
+                        </a>
+                      </td>
                       <td>{{ running_contest.start_time }}</td>
                       <td>{{ running_contest.end_time }}</td>
                     </tr>
@@ -141,13 +155,21 @@ SOFTWARE.
                 {% for ended_contest in ec_list %}
                   {% if ended_contest.is_homework %}
                   <tr style="background-color:#D6DBD0">
-                    <td>{{ ended_contest.cname }}</td>
+                    <td>
+                      <a href="{% url 'contest:contest' ended_contest.id %}">
+                        {{ ended_contest.cname }}
+                      </a>
+                    </td>
                     <td>{{ ended_contest.start_time }}</td>
                     <td>{{ ended_contest.end_time }}</td>
                   </tr>
                   {% else %}
                   <tr style="background-color:#C5C9C5">
-                    <td>{{ ended_contest.cname }}</td>
+                    <td>
+                      <a href="{% url 'contest:contest' ended_contest.id %}">
+                        {{ ended_contest.cname }}
+                      </a>
+                    </td>
                     <td>{{ ended_contest.start_time }}</td>
                     <td>{{ ended_contest.end_time }}</td>
                   </tr>
@@ -164,12 +186,21 @@ SOFTWARE.
   </div>
   <hr> 
   <div class="announce">
+    <div style="margin-bottom:15px">
+      <h5 style="text-decoration:underline;color:gray">Announce</h5>
+    </div>
     <table class="table table-hover">
       <thead>
         <tr>
           <th>Title</th>
           <th>Content</th>
-          <th></th>
+          <th>
+            {% if user_is_owner %}
+              <button type="button" class="btn btn-primary btn-sm" 
+                      data-toggle="modal" style="float:right" data-target="#addannounce">Add announce</button>
+              {% include "group/addannounce.html" %}
+            {% endif %}
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -189,7 +220,9 @@ SOFTWARE.
                   <div class="modal-header">
                     <button type="btn-default" class="close" data-dismiss="modal" 
                             aria-hidden="true">&times;</button>
-                    <h5 class="modal-title">{{annowence.title|truncatechars:42}}</h4>
+                    <h5 class="modal-title" title="{{annowence.title}}">
+                      {{annowence.title|truncatechars:42}}
+                    </h5>
                   <div class="modal-body">
                     <p style="word-wrap:break-word">{{ annowence.content }}</p>
                   </div>
@@ -211,10 +244,15 @@ SOFTWARE.
   </div>
   <hr> 
   <div class="member">
-    <form action="#" class="navbar-search pull-left" method="get">
-      <input type="text" name="q" class="search-query span10" value="" 
-             placeholder="Search..."style="float:left">
-    </form>
+    <div style="margin-bottom:15px">
+      <h5 style="text-decoration:underline;color:gray">Members</h5>
+    </div>
+    <div style="width:20%;float:left" class="input-group">
+      <span class="input-group-addon">
+        <span class="glyphicon glyphicon-search"></span>
+      </span>
+      <input id="search" class="form-control">
+    </div>
     <div class="btn-group" style="float:right">
       <a href="#" class="btn btn-default btn-sm">+</a>
       <a href="#" class="btn btn-defalut dropdown-toggle btn-sm" data-toggle="dropdown">
@@ -238,6 +276,7 @@ SOFTWARE.
           <th>Name</th>
           <th>Email</th>
           <th>Level</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -250,6 +289,15 @@ SOFTWARE.
             <td>{{ student.email }}</td>
           {% endif %}
           <td>{{ student.user_level }}</td>
+          <td>
+            {% if user_is_owner %}
+              <a href=".">
+                <button type="button" class="btn btn-danger btn-xs" style="float:right">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </button>
+              </a>
+            {% endif %}
+          </td>
         </tr>
         {% endfor %}
       </tbody>

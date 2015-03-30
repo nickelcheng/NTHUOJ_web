@@ -25,8 +25,8 @@ from django.shortcuts import render_to_response, render
 from django.utils import timezone
 from django.core.exceptions import PermissionDenied
 from django.forms.models import model_to_dict
-from group.forms import GroupForm, GroupFormEdit
-from group.models import Group
+from group.forms import GroupForm, GroupFormEdit, AnnounceForm
+from group.models import Group, Announce
 from utils.user_info import has_group_ownership
 from utils.log_info import get_logger
 
@@ -194,3 +194,31 @@ def edit(request, group_id):
                     return HttpResponseRedirect('/group/detail/%s' % modified_group.id)
         else:
             raise PermissionDenied
+
+def add(request, group_id):
+
+    #try:
+    #    group = request.POST['group']
+    #    group_obj = Group.objects.get(pk = group)
+    #except:
+    #    logger.warning('Add Announce: Can not add Announce!')
+    #    return HttpResponseRedirect('/group/detail/%s' % group.id)
+
+    group = get_group(group_id)
+
+    coowner_list = []
+    all_coowner = group.coowner.all()
+    for coowner in all_coowner:
+        coowner_list.append(coowner.username)
+
+    if request.user.username == group.owner.username or \
+       request.user.username in coowner_list:
+        if request.method == 'POST':
+            form = AnnounceForm(request.POST)
+            if form.is_valid():
+                new_announce = form.save()
+                logger.info('Announce: User %s add Announce %s!' % (request.user.username, new_announce.id))
+                return HttpResponseRedirect('/group/detail/%s' % group.id)
+    else:
+        raise PermissionDenied
+

@@ -63,11 +63,3 @@ function enable_search() {
         }
     });
 }
-
-function bootstraptify() {
-    add_form_control('id_cname');
-    hide('id_owner');
-    add_form_control('id_start_time');
-    add_form_control('id_end_time');
-    add_form_control('id_freeze_time');
-}

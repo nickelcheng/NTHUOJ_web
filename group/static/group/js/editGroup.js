@@ -20,15 +20,19 @@ SOFTWARE.
 $(document).ready(function() {
     add_attribute('id_coowner', 'class', 'searchable');
     add_attribute('id_member', 'class', 'searchable');
+    add_attribute('id_trace_contest', 'class', 'searchable')
     enable_search();
+    bootstraptify();
 });
 
 function enable_search() {
     $('.searchable').multiSelect({
-        selectableHeader: "<input type='text' class='search-input form-control' autocomplete='off'>",
-        selectionHeader: "<input type='text' class='search-input form-control' autocomplete='off'>",
-        selectableFooter: "<div class='custom-header'>All</div>",
-        selectionFooter: "<div class='custom-header'>Selected</div>",
+        selectableHeader: 
+        "<input type='text' class='search-input form-control' autocomplete='off' placeholder='Search/Add...'>",
+        selectionHeader: 
+        "<input type='text' class='search-input form-control' autocomplete='off' placeholder='Search/Delete...'>",
+        selectableFooter: "<div class='all-header' style='text-align:center;'>All</div>",
+        selectionFooter: "<div class='selected-header' style='text-align:center;'>Now Selected</div>",
         afterInit: function(ms) {
             var that = this,
                 $selectableSearch = that.$selectableUl.prev(),

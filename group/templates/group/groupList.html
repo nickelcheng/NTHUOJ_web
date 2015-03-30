@@ -23,46 +23,46 @@ SOFTWARE.-->
 
 {% extends "index/base.html" %} 
 {% load static %} 
+{% block import_source %}
+<link href="{% static 'group/css/group.css' %}" rel="stylesheet">
+{% endblock import_source %} 
 {% block body_block %}
 
-<div class="container-fluid">
+<div class="container" id="groupList">
   <div class="contest">
-    <br>
     <div class="well">
-      <!-- Create/Delete group need judge auth -->
-      {% if user.has_judge_auth %}
-      <div class="form-group">
-        <a class="btn btn-sm btn-default" style="float:right" 
-           href="{% url 'group:new' %}">Create</a>
-      </div>
-      {% endif %}
       <h2>Group List</h2>
     </div>
-    <div class="filter" style="float:right">
-      <div class="btn-group" data-toggle="buttons-radio" style="float:right">
-        <button id="myGroupButton" type="button" class="btn btn-primary">My Group</button>
-        <button id="allGroupButton" type="button" class="btn btn-primary">All Group</button>
-        <script>
-          $(function(){
+    <div class="btn-group" data-toggle="buttons-radio" style="float:left">
+      <button id="myGroupButton" type="button" class="btn btn-default">My Group</button>
+      <button id="allGroupButton" type="button" class="btn btn-default">All Group</button>
+      <script>
+        $(function(){
+          $('#allGroupTable').show();
+          $('#myGroupTable').hide();
+          $('#myGroupButton').click(function(){
+            $('#allGroupTable').hide();
+            $('#myGroup_Table').show();
+          });
+          $('#allGroupButton').click(function(){
             $('#allGroupTable').show();
             $('#myGroupTable').hide();
-            $('#myGroupButton').click(function(){
-              $('#allGroupTable').hide();
-              $('#myGroup_Table').show();
-            });
-            $('#allGroupButton').click(function(){
-              $('#allGroupTable').show();
-              $('#myGroupTable').hide();
-            });
-          })
-        </script>
-      </div>
+          });
+        })
+      </script>
     </div>
-    <a href="" class="btn btn-sm btn-default" data-toggle="modal" 
-       data-target="#searchGroupModal" style="float:left">Search group</a>
+    <div style="width:20%;float:right" class="input-group">
+      <span class="input-group-addon">
+        <span class="glyphicon glyphicon-search"></span>
+      </span>
+      <input id="search" class="form-control">
+    </div>
+    <br>
+    <br>
     <table id="allGroupTable" class="table table-hover">
       <thead>
         <tr>
+          <th>#</th>
           <th>Name</th>
           <th>Owner/TA</th>
           <th>Group Description</th>
@@ -72,19 +72,20 @@ SOFTWARE.-->
       <tbody>
         {% for group in a_g_list %}
         <tr>
+          <td>{{ group.id }}</td>
           <td>
             <a href="{% url 'group:detail' group.id %}">{{ group.gname }}</a>
           </td>
           <td>{{ group.owner }}</td>
           <td>{{ group.description|truncatechars:70 }}</td>
           <td>
-            {% if user.has_judge_auth %}
+          {% if user.has_judge_auth %}
             <a href="{% url 'group:delete' group.id %}">
-              <button type="button" class="btn btn-danger" style="float:right">
-                Delete
-              </button>
-            </a>
-            {% endif %}
+                <button type="button" class="btn btn-danger btn-xs" style="float:right">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </button>
+              </a>
+          {% endif %}
           </td>
         </tr>
         {% endfor %}
@@ -93,6 +94,7 @@ SOFTWARE.-->
     <table id="myGroupTable" class="table table-hover">
       <thead>
         <tr>
+          <th>#</th>
           <th>Name</th>
           <th>Owner/TA</th>
           <th>Group Description</th>
@@ -102,6 +104,7 @@ SOFTWARE.-->
       <tbody>
         {% for group in m_g_list %}
         <tr>
+          <td>{{ group.id }}</td>
           <td>
             <a href="{% url 'group:detail' group.id %}">{{ group.gname }}</a>
           </td>
@@ -109,17 +112,18 @@ SOFTWARE.-->
           <td>{{ group.description|truncatechars:70 }}</td>
           <td>
             {% if user.has_judge_auth %}
-            <a href="{% url 'group:delete' group.id %}">
-              <button type="button" class="btn btn-danger" style="float:right">
-                Delete
-              </button>
-            </a>
+              <a href="{% url 'group:delete' group.id %}">
+                <button type="button" class="btn btn-danger btn-xs" style="float:right">
+                  <span class="glyphicon glyphicon-remove"></span>
+                </button>
+              </a>
             {% endif %}
           </td>
         </tr>
         {% endfor %}
       </tbody>
     </table>
+  <div class="container-fluid">
     <ul class="pager">
       <li class="previous disabled"><a href="#" style="color:gray">← Previous</a>
       </li>
@@ -127,7 +131,6 @@ SOFTWARE.-->
       </li>
     </ul>
   </div>
-  <hr>
 </div>
 <!---Modal Section-->
 <!--1. Modal for search group-->

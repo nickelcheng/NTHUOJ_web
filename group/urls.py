@@ -11,4 +11,5 @@ urlpatterns = patterns('',
     url(r'^new/$', views.new, name='new'),
     url(r'^delete/(?P<group_id>\d+)/$', views.delete, name='delete'),
     url(r'^edit/(?P<group_id>\d+)/$', views.edit, name='edit'),
+    url(r'^add/$', views.add, name='add')
 )

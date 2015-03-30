@@ -31,35 +31,46 @@ SOFTWARE.
 <br>
 <br>
 <div class="container">
-  <a onclick="history.back()" type="reset" class="btn btn-sm btn-default">
-    Cancel
-  </a>
-  <br>
-  <br>
-  <div class="alert alert-dismissable alert-warning">
-    <button type="button" class="close" data-dismiss="alert">×</button>
-    <h4>Hey! You Now Setting for Group...</h4>
-    <p style="color:white">hint: HOLD shift to select more than two object</p>
-    <p style="color:white">hint: any change you made will save to the group</p>
-  </div>
-  <form action="." method="POST">
-    {% csrf_token %}
-    {% for field in form %}
-      {% if field.label_tag == form.owner.label_tag %}
-        {{ field.as_hidden }}
-      {% elif field.label_tag == form.creation_time.label_tag %}
-        {{ field.as_hidden }}
-      {% else %}
-        {{ field.errors }}
-        <div class="panel panel-default">
-          <div class="panel-heading">set {{field.label_tag}}</div>
-          <div class="panel-body">{{ field|bootstrap  }}</div>
-        </div>
-      {% endif %}
-    {% endfor %}
+  <div class="well">
+    <a onclick="history.back()" type="reset" class="btn btn-sm btn-default">
+      Cancel
+    </a>
     <br>
-    <input class="btn btn-sm btn-primary" type="submit" style="float:right" value="Comfirm">
-  </form>
+    <br>
+    <div class="alert alert-dismissable alert-warning">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      <h4>Hey! You Now Setting for Group...</h4>
+      <p style="color:white">hint: HOLD shift to select more than two object</p>
+      <p style="color:white">hint: any change you made will save to the group</p>
+    </div>
+    <form action="." method="POST">
+      {% csrf_token %}
+      {% for field in form %}
+        {% if field.label_tag == form.owner.label_tag %}
+          {{ field.as_hidden }}
+        {% elif field.label_tag == form.creation_time.label_tag %}
+          {{ field.as_hidden }}
+        {% elif field.label_tag == form.announce.label_tag %}
+          {{ field.as_hidden}}
+        {% else %}
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              {{ field.label_tag }}
+            </div>
+            <div class="panel-body">
+              <div class="fieldWrapper form-group">
+                {{ field.errors }}
+                {{ field }}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+      <br>
+      <input class="btn btn-sm btn-primary" type="submit" style="float:right" value="Comfirm">
+      <br>
+    </form>
+  </div>
 </div>
 <br>
 <br>

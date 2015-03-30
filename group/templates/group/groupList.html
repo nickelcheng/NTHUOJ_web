@@ -33,6 +33,12 @@ SOFTWARE.-->
     <div class="well">
       <h2>Group List</h2>
     </div>
+    {% if user.has_judge_auth %}
+      <div class="form-group">
+        <a class="btn btn-sm btn-default" style="float:right" 
+           href="{% url 'group:new' %}">Create</a>
+      </div>
+    {% endif %}
     <div class="btn-group" data-toggle="buttons-radio" style="float:left">
       <button id="myGroupButton" type="button" class="btn btn-default">My Group</button>
       <button id="allGroupButton" type="button" class="btn btn-default">All Group</button>
@@ -125,10 +131,23 @@ SOFTWARE.-->
     </table>
   <div class="container-fluid">
     <ul class="pager">
-      <li class="previous disabled"><a href="#" style="color:gray">← Previous</a>
-      </li>
-      <li class="next"><a href="#" style="color:black">Next →</a>
-      </li>
+    <span class="step-links">
+      {% if a_g_list.has_previous %}
+        <li class="previous">
+          <a href="?page={{ a_g_list.previous_page_number }}">← Previous</a>
+        </li>
+       {% endif %}
+
+      <span class="current">
+        Page {{ a_g_list.number }} of {{ a_g_list.paginator.num_pages }}.
+      </span>
+
+      {% if a_g_list.has_next %}
+        <li class="next">
+          <a href="?page={{ a_g_list.next_page_number }}">Next →</a>
+        </li>
+      {% endif %}
+    </span>
     </ul>
   </div>
 </div>

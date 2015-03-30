@@ -20,7 +20,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.'''
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render_to_response, render
 from django.utils import timezone
 from django.core.exceptions import PermissionDenied
@@ -29,6 +30,7 @@ from group.forms import GroupForm, GroupFormEdit, AnnounceForm
 from group.models import Group, Announce
 from utils.user_info import has_group_ownership
 from utils.log_info import get_logger
+from utils.render_helper import render_index
 
 logger = get_logger()
 
@@ -37,10 +39,7 @@ def get_group(group_id):
         group = Group.objects.get(id = group_id)
     except Group.DoesNotExist:
         logger.warning('Group: Can not edit group %s! Group is not exist!' % group_id)
-        return render(
-            request,
-            'index/404.html',
-            {'error_message': 'Group: Can not edit group %s! Group is not exist!' % group_id})
+        raise Http404('Group: Can not edit group %s! Group is not exist!' % group_id)
     return group
 
 def get_running_contest(request, group_id):
@@ -104,7 +103,7 @@ def detail(request, group_id):
     coowner_list = group.coowner.all()
     owner = group.owner
     user_is_owner = has_group_ownership(request.user, group)
-
+    form = AnnounceForm()
     running_contest_list = []
     ended_contest_list = []
     now = timezone.now()
@@ -126,18 +125,31 @@ def detail(request, group_id):
             'group_description': group.description,
             'group_id': group.id,
             'user_is_owner': user_is_owner,
+            'form': form,
         })
 
 
 def list(request):
 
-    all_group_list = Group.objects.order_by('-creation_time')
+    all_group = Group.objects.order_by('-creation_time')
     unsorted_group_list = Group.objects.filter(member__username__contains=request.user.username)
-    my_group_list = unsorted_group_list.order_by('-creation_time')
-    return render(
+    my_group = unsorted_group_list.order_by('-creation_time')
+    paginator = Paginator(all_group, 25)  # Show 25 users per page
+    page = request.GET.get('page')
+
+    try:
+        all_group = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        all_group = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        all_group = paginator.page(paginator.num_pages)
+
+    return render_index(
         request,'group/groupList.html', {
-            'a_g_list': all_group_list,
-            'm_g_list': my_group_list,
+            'a_g_list': all_group,
+            'm_g_list': my_group,
         })
 
 def new(request):
@@ -151,19 +163,19 @@ def new(request):
             if form.is_valid():
                 new_group = form.save()
                 logger.info('Group: Create a new group %s!' % new_group.id)
+                print 'yes'
                 return HttpResponseRedirect('/group/list')
             else:
-                return render(
+                return render_index(
                     request,
-                    'index/404.html',
-                    {'error_message': 'Cannot create group! Info is blank!'})
+                    'group/editGroup.html', {'form': form})
     else:
         raise PermissionDenied
 
 def delete(request, group_id):
 
     if request.user.has_judge_auth():
-        get_group(group_id)
+        group = get_group(group_id)
         deleted_gid = group.id
         group.delete()
         logger.info('Group: Delete group %s!' % deleted_gid)
@@ -196,27 +208,14 @@ def edit(request, group_id):
             raise PermissionDenied
 
 def add(request, group_id):
-
-    #try:
-    #    group = request.POST['group']
-    #    group_obj = Group.objects.get(pk = group)
-    #except:
-    #    logger.warning('Add Announce: Can not add Announce!')
-    #    return HttpResponseRedirect('/group/detail/%s' % group.id)
-
     group = get_group(group_id)
 
-    coowner_list = []
-    all_coowner = group.coowner.all()
-    for coowner in all_coowner:
-        coowner_list.append(coowner.username)
-
-    if request.user.username == group.owner.username or \
-       request.user.username in coowner_list:
+    if has_group_ownership(request.user, group):
         if request.method == 'POST':
             form = AnnounceForm(request.POST)
             if form.is_valid():
                 new_announce = form.save()
+                group.announce.add(new_announce)
                 logger.info('Announce: User %s add Announce %s!' % (request.user.username, new_announce.id))
                 return HttpResponseRedirect('/group/detail/%s' % group.id)
     else:

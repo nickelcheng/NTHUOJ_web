@@ -22,7 +22,7 @@ $(document).ready(function() {
     add_attribute('id_member', 'class', 'searchable');
     add_attribute('id_trace_contest', 'class', 'searchable')
     enable_search();
-    bootstraptify();
+    //$('.help-block').hide()
 });
 
 function enable_search() {

@@ -46,25 +46,16 @@ SOFTWARE.
     <form action="." method="POST">
       {% csrf_token %}
       {% for field in form %}
-        {% if field.label_tag == form.owner.label_tag %}
-          {{ field.as_hidden }}
-        {% elif field.label_tag == form.creation_time.label_tag %}
-          {{ field.as_hidden }}
-        {% elif field.label_tag == form.announce.label_tag %}
-          {{ field.as_hidden}}
-        {% else %}
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              {{ field.label_tag }}
-            </div>
-            <div class="panel-body">
-              <div class="fieldWrapper form-group">
-                {{ field.errors }}
-                {{ field }}
-              </div>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            {{ field.label_tag }}
+          </div>
+          <div class="panel-body">
+            <div class="fieldWrapper form-group">
+              {{ field|bootstrap }}
             </div>
           </div>
-        {% endif %}
+        </div>
       {% endfor %}
       <br>
       <input class="btn btn-sm btn-primary" type="submit" style="float:right" value="Comfirm">

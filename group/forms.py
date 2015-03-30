@@ -53,6 +53,6 @@ class AnnounceForm(forms.ModelForm):
             'content',
         ]
         widgets = {
-            'title': forms.Textarea(),
+            'title': forms.TextInput(),
             'content': forms.Textarea(),
         }

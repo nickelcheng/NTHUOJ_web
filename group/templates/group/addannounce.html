@@ -32,7 +32,7 @@ SOFTWARE.
         <h4 class="modal-title">Add Announce</h4>
       </div>
       <div class="modal-body">
-        <form action="{% url 'group:add' %}" method="POST">
+        <form action="{% url 'group:add' group_id %}" method="POST">
           {% csrf_token %} 
           <div class="form-group" style="width:50%">
             <label>Title</label>

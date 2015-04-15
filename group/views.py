@@ -33,6 +33,7 @@ from utils.log_info import get_logger
 from utils.render_helper import render_index
 from users.models import User
 
+
 logger = get_logger()
 
 def get_group(group_id):
@@ -44,6 +45,7 @@ def get_group(group_id):
     return group
 
 def get_running_contest(request, group_id):
+
     group = get_group(group_id)
 
     all_contest = group.trace_contest.all()
@@ -56,12 +58,13 @@ def get_running_contest(request, group_id):
 
     return render_index(
         request, 'group/viewall.html', {
-            'data_list': all_running_contest_list, 
+            'data_list': all_running_contest_list,
             'title': 'running contest',
             'list_type': 'runContest',
         })
 
-def get_ended_contest(request, group_id):    
+def get_ended_contest(request, group_id):
+
     group = get_group(group_id)
 
     all_contest = group.trace_contest.all()
@@ -74,7 +77,7 @@ def get_ended_contest(request, group_id):
 
     return render_index(
         request, 'group/viewall.html', {
-            'data_list': all_ended_contest_list, 
+            'data_list': all_ended_contest_list,
             'title': 'ended contest',
             'list_type': 'endContest',
         })
@@ -85,13 +88,14 @@ def get_all_announce(request, group_id):
     all_announce_list = group.announce.all()
     return render_index(
         request, 'group/viewall.html', {
-            'data_list': all_announce_list, 
+            'data_list': all_announce_list,
             'title': 'announce',
             'list_type': 'announce',
         })
 
-    
+
 def detail(request, group_id):
+
     group = get_group(group_id)
     show_number = 5; #number for brief list to show in group detail page.
     all_contest = group.trace_contest.all()
@@ -110,6 +114,7 @@ def detail(request, group_id):
         elif contest.end_time < now:
             ended_contest_list.append(contest)
 
+<<<<<<< HEAD
     paginator = Paginator(student_list, 15)  # Show 25 users per page
     page = request.GET.get('page')
 
@@ -124,7 +129,7 @@ def detail(request, group_id):
 
     return render_index(
         request, 'group/groupDetail.html', {
-            'rc_list': running_contest_list[0:show_number], 
+            'rc_list': running_contest_list[0:show_number],
             'ec_list': ended_contest_list[0:show_number],
             'an_list': annowence_list,
             'coowner_list': coowner_list,
@@ -174,7 +179,7 @@ def new(request):
     if request.user.has_judge_auth():
         if request.method == 'GET':
             form = GroupForm()
-            return render(request,'group/editGroup.html',{'form':form})
+            return render_index(request,'group/editGroup.html',{'form':form})
         if request.method == 'POST':
             form = GroupForm(request.POST)
             if form.is_valid():
@@ -229,14 +234,20 @@ def delete_member(request, group_id, student_name):
 def edit(request, group_id):
         group = get_group(group_id)
         
-        if has_group_ownership(request.user, group):
-            if request.method == 'GET':        
+        coowner_list = []
+        all_coowner = group.coowner.all()
+        for coowner in all_coowner:
+            coowner_list.append(coowner.username)
+
+        if request.user.username == group.owner.username or \
+           request.user.username in coowner_list:
+            if request.method == 'GET':
                 group_dic = model_to_dict(group)
                 form = GroupFormEdit(initial = group_dic)
                 return render_index(request,'group/editGroup.html',{'form':form})
             if request.method == 'POST':
                 form = GroupFormEdit(request.POST, instance = group)
-                if form.is_valid(): 
+                if form.is_valid():
                     modified_group = form.save()
                     logger.info('Group: Modified group %s!' % modified_group.id)
                     return HttpResponseRedirect('/group/detail/%s' % modified_group.id)

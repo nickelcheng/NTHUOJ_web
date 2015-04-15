@@ -22,14 +22,17 @@ $(document).ready(function() {
     add_attribute('id_problem', 'class', 'searchable');
     enable_search();
     bootstraptify();
+    modify_label();
 });
 
 function enable_search() {
     $('.searchable').multiSelect({
-        selectableHeader: "<input type='text' class='search-input form-control' autocomplete='off'>",
-        selectionHeader: "<input type='text' class='search-input form-control' autocomplete='off'>",
-        selectableFooter: "<div class='custom-header'>All</div>",
-        selectionFooter: "<div class='custom-header'>Selected</div>",
+        selectableHeader: 
+        "<input type='text' class='search-input form-control' autocomplete='off' placeholder='Search and Add...'>",
+        selectionHeader: 
+        "<input type='text' class='search-input form-control' autocomplete='off' placeholder='Search and Delete...'>",
+        selectableFooter: "<div class='all-header' style='text-align:center;'>All</div>",
+        selectionFooter: "<div class='selected-header' style='text-align:center;'>Selected</div>",
         afterInit: function(ms) {
             var that = this,
                 $selectableSearch = that.$selectableUl.prev(),
@@ -63,3 +66,4 @@ function enable_search() {
         }
     });
 }
+

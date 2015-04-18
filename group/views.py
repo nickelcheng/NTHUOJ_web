@@ -229,12 +229,13 @@ def new(request):
             if form.is_valid():
                 new_group = form.save()
                 logger.info('Group: Create a new group %s!' % new_group.id)
-                print 'yes'
                 return HttpResponseRedirect('/group/list')
             else:
                 return render_index(
                     request,
                     'group/editGroup.html', {'form': form})
+        else:
+            return None
     else:
         raise PermissionDenied
 
@@ -282,13 +283,7 @@ def delete_member(request, group_id, student_name):
 def edit(request, group_id):
         group = get_group(group_id)
 
-        coowner_list = []
-        all_coowner = group.coowner.all()
-        for coowner in all_coowner:
-            coowner_list.append(coowner.username)
-
-        if request.user.username == group.owner.username or \
-           request.user.username in coowner_list:
+        if has_group_ownership(request.user, group):
             if request.method == 'GET':
                 group_dic = model_to_dict(group)
                 form = GroupFormEdit(initial = group_dic)
@@ -299,6 +294,12 @@ def edit(request, group_id):
                     modified_group = form.save()
                     logger.info('Group: Modified group %s!' % modified_group.id)
                     return HttpResponseRedirect('/group/detail/%s' % modified_group.id)
+                else:
+                    return render_index(
+                        request,
+                        'group/editGroup.html', {'form': form})
+            else: 
+                return None
         else:
             raise PermissionDenied
 

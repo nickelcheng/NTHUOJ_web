@@ -105,7 +105,7 @@ SOFTWARE.
                 </tr>
               </thead>
               <tbody>
-                {% for running_contest in rc_list %}
+                {% for running_contest in running_contest_list %}
                   {% if running_contest.is_homework %}
                     <tr>
                       <td>
@@ -152,7 +152,7 @@ SOFTWARE.
                 </tr>
               </thead>
               <tbody>
-                {% for ended_contest in ec_list %}
+                {% for ended_contest in ended_contest_list %}
                   {% if ended_contest.is_homework %}
                   <tr>
                     <td>
@@ -207,7 +207,7 @@ SOFTWARE.
         </tr>
       </thead>
       <tbody>
-        {% for announce in an_list %}
+        {% for announce in announce_list %}
         <tr>
           <td>{{ announce.title|truncatechars:25 }}</td>
           <td>{{ announce.content|truncatechars:70 }}</td>
@@ -260,6 +260,7 @@ SOFTWARE.
     <div style="margin-bottom:15px">
       <h5 style="text-decoration:underline;color:gray">Members</h5>
     </div>
+    <!--
     <div style="width:20%;float:left" class="input-group">
       <span class="input-group-addon">
         <span class="glyphicon glyphicon-search"></span>
@@ -283,6 +284,7 @@ SOFTWARE.
       <a href="" class="btn btn-sm btn-default" data-toggle="modal" 
          data-target="#studentDataDownloadModal" style="float:right">Download</a>
     </div>
+    -->
     <table class="table table-hover">
       <thead>
         <tr>

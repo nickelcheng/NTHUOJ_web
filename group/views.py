@@ -170,9 +170,9 @@ def detail(request, group_id):
 
     return render_index(
         request, 'group/groupDetail.html', {
-            'rc_list': running_contest_list[0:show_number],
-            'ec_list': ended_contest_list[0:show_number],
-            'an_list': annowence_list,
+            'running_contest_list': running_contest_list[0:show_number],
+            'ended_contest_list': ended_contest_list[0:show_number],
+            'announce_list': annowence_list,
             'coowner_list': coowner_list,
             'owner': owner,
             'student_list': student_list,

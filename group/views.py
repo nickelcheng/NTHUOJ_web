@@ -20,11 +20,14 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.'''
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import PermissionDenied
+from django.db.models import Q
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render_to_response, render
 from django.utils import timezone
-from django.core.exceptions import PermissionDenied
 from django.forms.models import model_to_dict
 from group.forms import GroupForm, GroupFormEdit, AnnounceForm
 from group.models import Group, Announce
@@ -40,14 +43,13 @@ def get_group(group_id):
     try:
         group = Group.objects.get(id = group_id)
     except Group.DoesNotExist:
-        logger.warning('Group: Can not edit group %s! Group is not exist!' % group_id)
-        raise Http404('Group: Can not edit group %s! Group is not exist!' % group_id)
+        logger.warning('Group: Can not edit group %s! Group does not exist!' % group_id)
+        raise Http404('Group: Can not edit group %s! Group does not exist!' % group_id)
     return group
 
 def get_running_contest(request, group_id):
 
     group = get_group(group_id)
-
     all_contest = group.trace_contest.all()
     all_running_contest_list = []
     now = timezone.now()
@@ -55,6 +57,18 @@ def get_running_contest(request, group_id):
     for contest in all_contest:
         if contest.start_time < now and contest.end_time > now:
             all_running_contest_list.append(contest)
+
+    paginator = Paginator(all_running_contest_list, 15)  # Show 25 users per page
+    page = request.GET.get('page')
+
+    try:
+        all_running_contest_list = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        all_running_contest_list = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        all_running_contest_list = paginator.page(paginator.num_pages)
 
     return render_index(
         request, 'group/viewall.html', {
@@ -66,7 +80,6 @@ def get_running_contest(request, group_id):
 def get_ended_contest(request, group_id):
 
     group = get_group(group_id)
-
     all_contest = group.trace_contest.all()
     all_ended_contest_list = []
     now = timezone.now()
@@ -74,6 +87,18 @@ def get_ended_contest(request, group_id):
     for contest in all_contest:
         if contest.end_time < now:
             all_ended_contest_list.append(contest)
+
+    paginator = Paginator(all_ended_contest_list, 15)  # Show 25 users per page
+    page = request.GET.get('page')
+
+    try:
+        all_ended_contest_list = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        all_ended_contest_list = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        all_ended_contest_list = paginator.page(paginator.num_pages)
 
     return render_index(
         request, 'group/viewall.html', {
@@ -83,14 +108,31 @@ def get_ended_contest(request, group_id):
         })
 
 def get_all_announce(request, group_id):
-    group = get_group(group_id)
 
+    group = get_group(group_id)
+    user_is_owner = has_group_ownership(request.user, group)
+    form = AnnounceForm()
     all_announce_list = group.announce.all()
+
+    paginator = Paginator(all_announce_list, 15)  # Show 25 users per page
+    page = request.GET.get('page')
+
+    try:
+        all_announce_list = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        all_announce_list = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        all_announce_list = paginator.page(paginator.num_pages)
+
     return render_index(
         request, 'group/viewall.html', {
             'data_list': all_announce_list,
             'title': 'announce',
             'list_type': 'announce',
+            'user_is_owner': user_is_owner,
+            'group_id': group.id,
         })
 
 
@@ -114,7 +156,6 @@ def detail(request, group_id):
         elif contest.end_time < now:
             ended_contest_list.append(contest)
 
-<<<<<<< HEAD
     paginator = Paginator(student_list, 15)  # Show 25 users per page
     page = request.GET.get('page')
 
@@ -145,7 +186,9 @@ def detail(request, group_id):
 
 def list(request):
     all_group = Group.objects.order_by('-creation_time')
-    unsorted_group_list = Group.objects.filter(member__username__contains=request.user.username)
+    unsorted_group_list = Group.objects.filter(Q(member__username__contains=request.user.username) \
+                                             | Q(owner__username=request.user.username) \
+                                             | Q(coowner__username=request.user.username))
     my_group = unsorted_group_list.order_by('-creation_time')
     page = request.GET.get('page')
     
@@ -175,6 +218,7 @@ def list(request):
             'my_group_list': my_group,
         })
 
+@login_required
 def new(request):
     if request.user.has_judge_auth():
         if request.method == 'GET':
@@ -194,6 +238,7 @@ def new(request):
     else:
         raise PermissionDenied
 
+@login_required
 def delete(request, group_id):
     if request.user.has_judge_auth():
         group = get_group(group_id)
@@ -204,6 +249,7 @@ def delete(request, group_id):
     else:
         raise PermissionDenied
 
+@login_required
 def delete_announce(request, announce_id, group_id):
     group = get_group(group_id)
 
@@ -217,6 +263,7 @@ def delete_announce(request, announce_id, group_id):
     else:
         raise PermissionDenied
 
+@login_required
 def delete_member(request, group_id, student_name):
     group = get_group(group_id)
     deleted_member = User.objects.get(username=student_name)
@@ -231,9 +278,10 @@ def delete_member(request, group_id, student_name):
     else:
         raise PermissionDenied
 
+@login_required
 def edit(request, group_id):
         group = get_group(group_id)
-        
+
         coowner_list = []
         all_coowner = group.coowner.all()
         for coowner in all_coowner:
@@ -254,6 +302,7 @@ def edit(request, group_id):
         else:
             raise PermissionDenied
 
+@login_required
 def add(request, group_id):
     group = get_group(group_id)
 

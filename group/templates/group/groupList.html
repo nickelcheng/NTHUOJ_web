@@ -21,11 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.-->
 
+{% extends "index/base.html" %}
 {% load static %} 
 {% block import_source %}
 <link href="{% static 'group/css/group.css' %}" rel="stylesheet">
 {% endblock import_source %} 
-{% extends "index/base.html" %}
 {% block body_block %}
 
 <div class="container" id="groupList">
@@ -57,16 +57,9 @@ SOFTWARE.-->
         })
       </script>
     </div>
-    <div style="width:20%;float:right" class="input-group">
-      <span class="input-group-addon">
-        <span class="glyphicon glyphicon-search"></span>
-      </span>
-      <input id="search" class="form-control">
-    </div>
     <br>
     <br>
     <hr>
-    
     <div id="myGroupTable">
       {% include "group/groupTable.html" with group_list=my_group_list %}
     </div>

@@ -107,7 +107,7 @@ SOFTWARE.
               <tbody>
                 {% for running_contest in rc_list %}
                   {% if running_contest.is_homework %}
-                    <tr style="background-color:#F1F7EA">
+                    <tr>
                       <td>
                         <a href="{% url 'contest:contest' running_contest.id %}">
                           {{ running_contest.cname }}
@@ -117,7 +117,7 @@ SOFTWARE.
                       <td>{{ running_contest.end_time }}</td>
                     </tr>
                   {% else %}
-                    <tr style="background-color:#E3E8E3">
+                    <tr>
                       <td>
                         <a href="{% url 'contest:contest' running_contest.id %}">
                           {{ running_contest.cname }}
@@ -154,7 +154,7 @@ SOFTWARE.
               <tbody>
                 {% for ended_contest in ec_list %}
                   {% if ended_contest.is_homework %}
-                  <tr style="background-color:#D6DBD0">
+                  <tr>
                     <td>
                       <a href="{% url 'contest:contest' ended_contest.id %}">
                         {{ ended_contest.cname }}
@@ -164,7 +164,7 @@ SOFTWARE.
                     <td>{{ ended_contest.end_time }}</td>
                   </tr>
                   {% else %}
-                  <tr style="background-color:#C5C9C5">
+                  <tr>
                     <td>
                       <a href="{% url 'contest:contest' ended_contest.id %}">
                         {{ ended_contest.cname }}
@@ -197,8 +197,11 @@ SOFTWARE.
           <th>
             {% if user_is_owner %}
               <button type="button" class="btn btn-primary btn-sm" 
-                      data-toggle="modal" style="float:right" data-target="#addannounce">Add announce</button>
-              {% include "group/addannounce.html" %}
+                      data-toggle="modal" style="float:right" 
+                      data-target="#addannounce">
+                Add announce
+              </button>
+              {% include "group/addAnnounce.html" %}
             {% endif %}
           </th>
         </tr>
@@ -222,7 +225,7 @@ SOFTWARE.
                             aria-hidden="true">&times;</button>
                     <h5 class="modal-title" title="{{announce.title}}">
                       {{announce.title|truncatechars:42}}
-                    </h5>
+                    </h5> 
                   <div class="modal-body">
                     <p style="word-wrap:break-word">{{ announce.content }}</p>
                   </div>
@@ -337,6 +340,7 @@ SOFTWARE.
   </div>
   <!--Modal Section-->
   <!--1. Modal for Downloading student data-->
+  <!--
   <div class="modal fade" id="studentDataDownloadModal" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -356,6 +360,7 @@ SOFTWARE.
       </div>
     </div>
   </div>
+  -->
   <!--Modal Section End-->
 </div>
 {% endblock body_block %}

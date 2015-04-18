@@ -36,11 +36,6 @@ SOFTWARE.
       </div>
     </div>
 <div class="modal-body">
-  <div class="input-group" style="">
-    <span class="input-group-addon">search {{ title }} by id</span>
-    <input type="text" class="form-control" style="width:30%">
-    <button class="btn btn-default btn-sm" type="button" style="float:left">search</button>
-  </div>
   <br>
   <table class="table table-hover">
     <thead>
@@ -57,28 +52,44 @@ SOFTWARE.
       <tr>
         {% if list_type == 'runContest'%}
           {% if archive.is_homework %}
-            <tr style="background-color:#F1F7EA">
-              <td>{{ archive.cname }}</td>
+            <tr>
+              <td>
+                <a href="{% url 'contest:contest' archive.id %}">
+                  {{ archive.cname }}
+                </a>
+              </td>
               <td>{{ archive.start_time }}</td>
               <td>{{ archive.end_time }}</td>
             </tr>
           {% else %}
-            <tr style="background-color:#E3E8E3">
-              <td>{{ archive.cname }}</td>
+            <tr>
+              <td>
+                <a href="{% url 'contest:contest' archive.id %}">
+                  {{ archive.cname }}
+                </a>
+              </td>
               <td>{{ archive.start_time }}</td>
               <td>{{ archive.end_time }}</td>
             </tr>
           {% endif %}
         {% elif list_type == 'endContest'%}
           {% if archive.is_homework %}
-            <tr style="background-color:#D6DBD0">
-              <td>{{ archive.cname }}</td>
+            <tr>
+              <td>
+                <a href="{% url 'contest:contest' archive.id %}">
+                  {{ archive.cname }}
+                </a>
+              </td>
               <td>{{ archive.start_time }}</td>
               <td>{{ archive.end_time }}</td>
             </tr>
           {% else %}
-            <tr style="background-color:#C5C9C5">
-              <td>{{ archive.cname }}</td>
+            <tr>
+              <td>
+                <a href="{% url 'contest:contest' archive.id %}">
+                  {{ archive.cname }}
+                </a>
+              </td>
               <td>{{ archive.start_time }}</td>
               <td>{{ archive.end_time }}</td>
             </tr>
@@ -87,39 +98,58 @@ SOFTWARE.
         <td>{{ archive.title }}</td>
         <td>{{ archive.content }}</td>
         <td>
-          <a href="" class="btn btn-sm btn-default" data-toggle="modal" 
-             data-target="#annowenceContentModal{{archive.id}}" style="float:right">
-            Detail</a>
-          <!--1. Modal for Edit Annowence button-->
-          <div class="modal fade" id="annowenceContentModal{{archive.id}}" 
-               role="dialog" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="btn-default" class="close" data-dismiss="modal" 
-                          aria-hidden="true">&times;</button>
-                  <h4 class="modal-title">Edit Annowence</h4>
-                </div>
-                <div class="modal-body">
-                  <div class="input-group">
-                    <span class="input-group-addon">Title</span>
-                    <input type="text" class="form-control" value="{{ archive.name }}">
+            <a href="" class="btn btn-sm btn-default" data-toggle="modal" 
+               data-target="#annowenceContentModal{{announce.id}}" 
+               style="float:right">Detail</a>
+            <!--1. Modal for Annowence Detail button-->
+            <div class="modal fade" id="annowenceContentModal{{announce.id}}" 
+                 role="dialog" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="btn-default" class="close" data-dismiss="modal" 
+                            aria-hidden="true">&times;</button>
+                    <h5 class="modal-title" title="{{archive.title}}">
+                      {{archive.title|truncatechars:42}}
+                    </h5>
+                  <div class="modal-body">
+                    <p style="word-wrap:break-word">{{ archive.content }}</p>
                   </div>
-                  <textarea class="form-control input-sm" type="text" style="height:200px;">
-                    {{ archive.content }}</textarea>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                  <button type="button" class="btn btn-primary"> Confirm </button>
+                  <div class="modal-footer">
+                    <div class="col-lg-offset-8 col-lg-1">
+                    {% if user_is_owner %}
+                      <a href="{% url 'group:delete_announce' archive.id group_id %}">
+                        <button type="button" class="btn btn-danger btn-default">Delete
+                        </button>
+                      </a>
+                    {% endif %}
+                    </div>
+                    <div class="col-lg-offset-1 col-lg-1">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                      Close</button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </td>
+          </td>
         {% endif %} 
       </tr>
       {% endfor %}
     </tbody>
   </table>
+  <nav>
+    <ul class="pager">
+      {% if data_list.has_previous %}
+      <li><a href="?page={{ data_list.previous_page_number }}">← Previous</a></li>
+      {% endif %}
+      <span class="current">
+        Page {{ data_list.number }} of {{ data_list.paginator.num_pages }}.
+      </span>
+      {% if data_list.has_next %}
+      <li><a href="?page={{ data_list.next_page_number }}">Next →</a></li>
+      {% endif %}
+    </ul>
+  </nav>
 </div>
 {% endblock body_block %}

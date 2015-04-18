@@ -41,7 +41,7 @@ logger = get_logger()
 
 def get_group(group_id):
     try:
-        group = Group.objects.get(id = group_id)
+        group = Group.objects.get(id=group_id)
     except Group.DoesNotExist:
         logger.warning('Group: Can not edit group %s! Group does not exist!' % group_id)
         raise Http404('Group: Can not edit group %s! Group does not exist!' % group_id)

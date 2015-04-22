@@ -27,6 +27,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.core.servers.basehttp import FileWrapper
+from django.utils import timezone
 
 from utils.render_helper import render_index
 from users.models import User
@@ -69,6 +70,10 @@ def detail(request, pid):
     tag_form = TagForm()
     try:
         problem = Problem.objects.get(pk=pid)
+        last_contest = problem.contest_set.all().order_by('-start_time')
+        if last_contest.start_time < timezone.now():
+            problem.visible = True
+            problem.save()
     except Problem.DoesNotExist:
         logger.warning('problem %s not found' % (pid))
         raise Http404('problem %s does not exist' % (pid))

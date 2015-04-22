@@ -1,10 +1,11 @@
 <table class="table">
   <thead>
     <tr>
-      <th style="width:20%">Problem ID</th>
-      <th>Problem Name</th>
-      <th>Pass Rate</th>
       <th></th>
+      <th>#</th>
+      <th>Problem</th>
+      <th>Pass Rate</th>
+      <th>Owner</th>
     </tr>
   </thead>
   <tbody>
@@ -12,20 +13,22 @@
       <tr>
         <td>
           {% if user == p.owner or user.is_admin %}
-            <span id='rejudge' class='glyphicon glyphicon-refresh'
-                  data-toggle="tooltip" data-placement="left" title="Rejudge"></span>
-          {% endif %}
-          &nbsp;{{p.pk}}
-        </td>
-
-        <td><a href="{% url 'problem:problem.views.detail' p.pk %}">{{p.pname}}</a>&nbsp;
-          {% if user == p.owner or user.is_admin %}
-            <a href="{% url 'problem:problem.views.edit' p.pk %}">
+            <button class="btn btn-info btn-xs">
+              <span id='rejudge' class='glyphicon glyphicon-refresh'
+                    data-toggle="tooltip" data-placement="left" title="Rejudge"></span>
+            </button>
+            <a id="del_btn" class="btn btn-danger btn-xs" data-target="{{p.pk}}" class="btn btn-primary"
+              href="{% url 'problem:delete_problem' p.pk %}">
+              <span class=" glyphicon glyphicon-remove"></span>
+            </a>
+            <a class="btn btn-warning btn-xs" href="{% url 'problem:problem.views.edit' p.pk %}">
               <span id='edit' class='glyphicon glyphicon-pencil'
               data-toggle="tooltip" data-placement="right" title="Edit"></span>
             </a>
           {% endif %}
         </td>
+        <td>{{p.pk}}</td>
+        <td><a href="{% url 'problem:problem.views.detail' p.pk %}">{{p.pname}}</a></td>
         <td>
           {% if p.no_submission %}
             No submission
@@ -40,12 +43,7 @@
             </div>
           {% endif %}
         </td>
-        <td>
-          {% if user == p.owner or user.is_admin %}
-            <a data-target="{{p.pk}}" class="btn btn-primary"
-              href="{% url 'problem:delete_problem' p.pk %}">Delete</a>
-          {% endif %}
-        </td>
+        <td>{{p.owner}}</td>
       </tr>
     {% endfor %}
   </tbody>
@@ -54,6 +52,9 @@
 $(document).ready(function () {
   $('[data-toggle="tooltip"]').tooltip();
   $('.progress').css('overflow', 'inherit');
+  $('#del_btn').click(function (){
+    return confirm("Do you really want to delete?");
+  });
 });
 </script>
 

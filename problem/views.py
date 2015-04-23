@@ -138,8 +138,7 @@ def edit(request, pid=None):
             return redirect('/problem/%d' % (problem.pk))
     if not request.user.has_admin_auth():
         del form.fields['owner']
-    else:
-        return render_index(request, 'problem/edit.html',
+    return render_index(request, 'problem/edit.html',
                             {'form': form, 'pid': pid, 'pname': problem.pname,
                              'tags': tags, 'tag_form': tag_form, 'description': problem.description,
                              'input': problem.input, 'output': problem.output,

@@ -34,7 +34,8 @@ function switchTab(t) {
 $(document).ready(function() {
     $(".tab-pane").hide();
     $("#info").show();
-    hide_field();
+    choose_judge_type($("#id_judge_type").val());
+    choose_judge_source($("#id_judge_source").val());
     if (window.location.href.indexOf('?') != -1) {
         var param = window.location.href.slice(window.location.href.indexOf('?')+1).split('&');
 	for (var i = 0; i < param.length; i++) {

@@ -70,7 +70,7 @@ def detail(request, pid):
     tag_form = TagForm()
     try:
         problem = Problem.objects.get(pk=pid)
-        if problem.visible and (user != problem.owner or not user.is_admin):
+        if not problem.visible or (user != problem.owner or not user.has_admin_auth()):
             raise PermissionDenied()
         last_contest = problem.contest_set.all().order_by('-start_time')
         if len(last_contest) > 0:
@@ -101,7 +101,7 @@ def edit(request, pid=None):
     tag_form = TagForm()
     try:
         problem = Problem.objects.get(pk=pid)
-        if not request.user.is_admin and request.user != problem.owner:
+        if not request.user.has_admin_auth() and request.user != problem.owner:
             logger.warning("user %s has no permission to edit problem %s" % (request.user, pid))
             raise PermissionDenied()
     except Problem.DoesNotExist:
@@ -136,7 +136,7 @@ def edit(request, pid=None):
             logger.info('edit problem, pid = %d by %s' % (problem.pk, request.user))
             logger.info('edit problem, pid = %d' % (problem.pk))
             return redirect('/problem/%d' % (problem.pk))
-    if not request.user.is_admin:
+    if not request.user.has_admin_auth():
         del form.fields['owner']
     else:
         return render_index(request, 'problem/edit.html',
@@ -183,7 +183,7 @@ def delete_tag(request, pid, tag_id):
     except Tag.DoesNotExist:
         logger.warning("tag %s does not exist" % (tag_id))
         raise Http404("tag %s does not exist" % (tag_id))
-    if not request.user.is_admin and request.user != problem.owner:
+    if not request.user.has_admin_auth() and request.user != problem.owner:
         raise PermissionDenied()
     logger.info("tag %s deleted by %s" % (tag.tag_name, request.user))
     problem.tags.remove(tag)
@@ -242,7 +242,7 @@ def delete_testcase(request, pid, tid):
     except Testcase.DoesNotExist:
         logger.warning("testcase %s does not exist" % (tid))
         raise Http404("testcase %s does not exist" % (tid))
-    if not request.user.is_admin and request.user != problem.owner:
+    if not request.user.has_admin_auth() and request.user != problem.owner:
         raise PermissionDenied
     logger.info("testcase %d deleted" % (testcase.pk))
     try:
@@ -260,7 +260,7 @@ def delete_problem(request, pid):
     except Problem.DoesNotExist:
         logger.warning("problem %s does not exist" % (pid))
         raise Http404("problem %s does not exist" % (pid))
-    if not request.user.is_admin and request.user != problem.owner:
+    if not request.user.has_admin_auth() and request.user != problem.owner:
         raise PermissionDenied
     logger.info("problem %d deleted by %s" % (problem.pk, request.user))
     problem.delete()

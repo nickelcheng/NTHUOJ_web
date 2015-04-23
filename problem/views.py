@@ -73,9 +73,10 @@ def detail(request, pid):
         if problem.visible and (user != problem.owner or not user.is_admin):
             raise PermissionDenied()
         last_contest = problem.contest_set.all().order_by('-start_time')
-        if last_contest.start_time < timezone.now():
-            problem.visible = True
-            problem.save()
+        if len(last_contest) > 0:
+            if last_contest[0].start_time < timezone.now():
+                problem.visible = True
+                problem.save()
     except Problem.DoesNotExist:
         logger.warning('problem %s not found' % (pid))
         raise Http404('problem %s does not exist' % (pid))

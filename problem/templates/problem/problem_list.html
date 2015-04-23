@@ -13,10 +13,10 @@
       <tr>
         <td>
           {% if user == p.owner or user.is_admin %}
-            <button class="btn btn-info btn-xs">
-              <span id='rejudge' class='glyphicon glyphicon-refresh'
-                    data-toggle="tooltip" data-placement="left" title="Rejudge"></span>
-            </button>
+            <!-- <button class="btn btn-info btn-xs"> -->
+            <!--   <span id='rejudge' class='glyphicon glyphicon-refresh' -->
+            <!--         data-toggle="tooltip" data-placement="left" title="Rejudge"></span> -->
+            <!-- </button> -->
             <a id="del_btn" class="btn btn-danger btn-xs" data-target="{{p.pk}}" class="btn btn-primary"
               href="{% url 'problem:delete_problem' p.pk %}">
               <span class=" glyphicon glyphicon-remove"></span>

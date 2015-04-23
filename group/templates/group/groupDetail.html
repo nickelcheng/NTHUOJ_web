@@ -1,36 +1,10 @@
-<!--
-The MIT License (MIT)
-
-Copyright (c) 2014 NTHUOJ team
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
--->
 {% extends "index/base.html" %}
-{% load static %} 
-{% block import_source %}
-<link href="{% static 'group/css/group.css' %}" rel="stylesheet">
-{% endblock import_source %} 
+{% load static %}
 {% block body_block %}
 <br>
 <div class="container-fluid">
   <div class="row-fluid">
-    <a href="{% url 'group:list' %}" class="btn btn-sm btn-default" 
+    <a href="{% url 'group:list' %}" class="btn btn-sm btn-default"
        data-toggle="modal" style="float:left, margin-right:5px">
       Return
     </a>
@@ -42,7 +16,7 @@ SOFTWARE.
     </a>
     {% endif %}
     <br>
-    <br> 
+    <br>
     <div class="container-fluid">
       <div class="span12">
         <div class="container-fluid">
@@ -52,7 +26,7 @@ SOFTWARE.
               <h2>{{ group_name }}</h2>
             </div>
             <div class="container-fluid" style="width:50%;float:right">
-              <div style="float:left; margin-right:70px">  
+              <div style="float:left; margin-right:70px">
                 <h4 style="color:gray;margin-bottom:30px">Owner</h4>
                 <h3 title="{{owner.email}}">{{ owner }}</h3>
               </div>
@@ -66,7 +40,7 @@ SOFTWARE.
                     {% else %}
                     <h3 style="display:inline">,&nbsp</h3>
                   {% endif %}
-                {% endfor %} 
+                {% endfor %}
               </div>
             </div>
           </div>
@@ -82,7 +56,7 @@ SOFTWARE.
       </div>
     </div>
   </div>
-  <hr> 
+  <hr>
   <div class="contest">
     <div style="margin-bottom:15px">
       <h5 style="text-decoration:underline;color:gray">Contest</h5>
@@ -184,7 +158,7 @@ SOFTWARE.
       </div>
     </div>
   </div>
-  <hr> 
+  <hr>
   <div class="announce">
     <div style="margin-bottom:15px">
       <h5 style="text-decoration:underline;color:gray">Announce</h5>
@@ -212,16 +186,16 @@ SOFTWARE.
           <td>{{ announce.title|truncatechars:25 }}</td>
           <td>{{ announce.content|truncatechars:70 }}</td>
           <td>
-            <a href="" class="btn btn-sm btn-default" data-toggle="modal" 
-               data-target="#annowenceContentModal{{announce.id}}" 
+            <a href="" class="btn btn-sm btn-default" data-toggle="modal"
+               data-target="#annowenceContentModal{{annowence.id}}"
                style="float:right">Detail</a>
             <!--1. Modal for Annowence Detail button-->
-            <div class="modal fade" id="annowenceContentModal{{announce.id}}" 
+            <div class="modal fade" id="annowenceContentModal{{annowence.id}}"
                  role="dialog" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
-                    <button type="btn-default" class="close" data-dismiss="modal" 
+                    <button type="btn-default" class="close" data-dismiss="modal"
                             aria-hidden="true">&times;</button>
                     <h5 class="modal-title" title="{{announce.title}}">
                       {{announce.title|truncatechars:42}}
@@ -255,7 +229,7 @@ SOFTWARE.
        onclick="window.open('{% url 'group:viewall_announce' group_id %}', '', config='height=500,width=800');">view all</a>
     <br>
   </div>
-  <hr> 
+  <hr>
   <div class="member">
     <div style="margin-bottom:15px">
       <h5 style="text-decoration:underline;color:gray">Members</h5>
@@ -267,6 +241,10 @@ SOFTWARE.
       </span>
       <input id="search" class="form-control">
     </div>
+    <form action="#" class="navbar-search pull-left" method="get">
+      <input type="text" name="q" class="search-query span10" value=""
+             placeholder="Search..."style="float:left">
+    </form>
     <div class="btn-group" style="float:right">
       <a href="#" class="btn btn-default btn-sm">+</a>
       <a href="#" class="btn btn-defalut dropdown-toggle btn-sm" data-toggle="dropdown">
@@ -281,7 +259,7 @@ SOFTWARE.
         <li><a href="#">Something else</a>
         </li>
       </ul>
-      <a href="" class="btn btn-sm btn-default" data-toggle="modal" 
+      <a href="" class="btn btn-sm btn-default" data-toggle="modal"
          data-target="#studentDataDownloadModal" style="float:right">Download</a>
     </div>
     -->
@@ -347,7 +325,7 @@ SOFTWARE.
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="btn-default" class="close" data-dismiss="modal" 
+          <button type="btn-default" class="close" data-dismiss="modal"
                   aria-hidden="true">&times;</button>
           <h4 class="modal-title">Download data</h4>
         </div>

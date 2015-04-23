@@ -61,14 +61,17 @@ def has_group_ownership(curr_user, curr_group):
 
     if curr_user == curr_group.owner:
         return True
+    return False
 
+def has_group_coownership(curr_user, curr_group):
+    curr_user = validate_user(curr_user)
+    
     group_coowners = curr_group.coowner.all()
     if group_coowners:
         for coowner in group_coowners:
             if curr_user == coowner:
                 return True
     return False
-
 
 def has_problem_ownership(curr_user, curr_problem):
     curr_user = validate_user(curr_user)

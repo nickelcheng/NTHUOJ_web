@@ -1,5 +1,8 @@
 {% extends "index/base.html" %}
 {% load static %}
+{% block title_name %}
+<title>All {{ title }}</title>
+{% endblock title_name %}
 {% block body_block %}
 <br>
 <div class="span12">
@@ -15,61 +18,37 @@
   <br>
   <table class="table table-hover">
     <thead>
-      <th>{{ title }} title</th>
-      {% if list_type == "announce" %}
-      <th>announce content</th>
-      {% else %}
-      <th>start time</th>
-      <th>end time</th>
-      {% endif %}
+      <tr>
+        <th>ID</th>
+        <th>title</th>
+        {% if list_type == "announce" %}
+        <th>announce content</th>
+        {% else %}
+        <th>start time</th>
+        <th>end time</th>
+        {% endif %}
+      </tr>
     </thead>
     <tbody>
       {% for archive in data_list %}
       <tr>
+        <td>{{ archive.id }}</td>
         {% if list_type == 'runContest'%}
-          {% if archive.is_homework %}
-            <tr>
-              <td>
-                <a href="{% url 'contest:contest' archive.id %}">
-                  {{ archive.cname }}
-                </a>
-              </td>
-              <td>{{ archive.start_time }}</td>
-              <td>{{ archive.end_time }}</td>
-            </tr>
-          {% else %}
-            <tr>
-              <td>
-                <a href="{% url 'contest:contest' archive.id %}">
-                  {{ archive.cname }}
-                </a>
-              </td>
-              <td>{{ archive.start_time }}</td>
-              <td>{{ archive.end_time }}</td>
-            </tr>
-          {% endif %}
+          <td>
+            <a href="{% url 'contest:contest' archive.id %}">
+              {{ archive.cname }}
+            </a>
+          </td>
+          <td>{{ archive.start_time }}</td>
+          <td>{{ archive.end_time }}</td>
         {% elif list_type == 'endContest'%}
-          {% if archive.is_homework %}
-            <tr>
-              <td>
-                <a href="{% url 'contest:contest' archive.id %}">
-                  {{ archive.cname }}
-                </a>
-              </td>
-              <td>{{ archive.start_time }}</td>
-              <td>{{ archive.end_time }}</td>
-            </tr>
-          {% else %}
-            <tr>
-              <td>
-                <a href="{% url 'contest:contest' archive.id %}">
-                  {{ archive.cname }}
-                </a>
-              </td>
-              <td>{{ archive.start_time }}</td>
-              <td>{{ archive.end_time }}</td>
-            </tr>
-          {% endif %}
+          <td>
+            <a href="{% url 'contest:contest' archive.id %}">
+              {{ archive.cname }}
+            </a>
+          </td>
+          <td>{{ archive.start_time }}</td>
+          <td>{{ archive.end_time }}</td>
         {% elif list_type == "announce" %}
         <td>{{ archive.title }}</td>
         <td>{{ archive.content }}</td>

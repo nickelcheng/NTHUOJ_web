@@ -138,20 +138,19 @@ def edit(request, pid=None):
             return redirect('/problem/%d' % (problem.pk))
     if not request.user.is_admin:
         del form.fields['owner']
-    else:
-        return render_index(request, 'problem/edit.html',
-                            {'form': form, 'pid': pid, 'pname': problem.pname,
-                             'tags': tags, 'tag_form': tag_form, 'description': problem.description,
-                             'input': problem.input, 'output': problem.output,
-                             'sample_in': problem.sample_in, 'sample_out': problem.sample_out,
-                             'testcase': testcase,
-                             'path': {
-                                 'TESTCASE_PATH': TESTCASE_PATH,
-                                 'SPECIAL_PATH': SPECIAL_PATH,
-                                 'PARTIAL_PATH': PARTIAL_PATH, },
-                             'has_special_judge_code': has_special_judge_code(problem),
-                             'has_partial_judge_code': has_partial_judge_code(problem),
-                             'file_ex': get_problem_file_extension(problem)})
+    return render_index(request, 'problem/edit.html',
+			    {'form': form, 'pid': pid, 'pname': problem.pname,
+			     'tags': tags, 'tag_form': tag_form, 'description': problem.description,
+			     'input': problem.input, 'output': problem.output,
+			     'sample_in': problem.sample_in, 'sample_out': problem.sample_out,
+			     'testcase': testcase,
+			     'path': {
+				 'TESTCASE_PATH': TESTCASE_PATH,
+				 'SPECIAL_PATH': SPECIAL_PATH,
+				 'PARTIAL_PATH': PARTIAL_PATH, },
+			     'has_special_judge_code': has_special_judge_code(problem),
+			     'has_partial_judge_code': has_partial_judge_code(problem),
+			     'file_ex': get_problem_file_extension(problem)})
 
 @login_required
 def tag(request, pid):

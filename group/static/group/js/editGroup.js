@@ -19,20 +19,20 @@ SOFTWARE.
 */
 $(document).ready(function() {
     add_attribute('id_coowner', 'class', 'searchable');
-    add_attribute('id_problem', 'class', 'searchable');
-    hide('id_owner');
+    add_attribute('id_member', 'class', 'searchable');
+    add_attribute('id_trace_contest', 'class', 'searchable')
     enable_search();
-    modify_label();
+    //$('.help-block').hide()
 });
 
 function enable_search() {
     $('.searchable').multiSelect({
         selectableHeader: 
-        "<input type='text' class='search-input form-control' autocomplete='off' placeholder='Search and Add...'>",
+        "<input type='text' class='search-input form-control' autocomplete='off' placeholder='Search/Add...'>",
         selectionHeader: 
-        "<input type='text' class='search-input form-control' autocomplete='off' placeholder='Search and Delete...'>",
+        "<input type='text' class='search-input form-control' autocomplete='off' placeholder='Search/Delete...'>",
         selectableFooter: "<div class='all-header' style='text-align:center;'>All</div>",
-        selectionFooter: "<div class='selected-header' style='text-align:center;'>Selected</div>",
+        selectionFooter: "<div class='selected-header' style='text-align:center;'>Now Selected</div>",
         afterInit: function(ms) {
             var that = this,
                 $selectableSearch = that.$selectableUl.prev(),
@@ -65,11 +65,4 @@ function enable_search() {
             this.qs2.cache();
         }
     });
-}
-
-function modify_label(){
-    modify_html('[for=id_freeze_time]','Freeze Time(mins):');
-    modify_html('[for=id_start_time]','Start Time(YYYY-MM-DD hh:mm:ss):');
-    modify_html('[for=id_end_time]','End Time(YYYY-MM-DD hh:mm:ss):');
-    modify_html('.help-block','');
 }

@@ -1,18 +1,28 @@
 {% extends "index/base.html" %}
 {% load static %}
+{% block title_name %}
+<title>{{ group_name }}</title>
+{% endblock title_name %}
 {% block body_block %}
 <br>
 <div class="container-fluid">
   <div class="row-fluid">
     <a href="{% url 'group:list' %}" class="btn btn-sm btn-default"
        data-toggle="modal" style="float:left, margin-right:5px">
-      return
+      Back
     </a>
     {% if user_is_owner %}
-    <a href="{% url 'group:edit' group_id %}">
-      <button type="button" class="btn btn-sm btn-default">
-        Edit
-      </button>
+      <a href="{% url 'group:edit' group_id %}">
+        <button type="button" class="btn btn-sm btn-default">
+          Edit
+        </button>
+    </a>
+    {% endif %}
+    {% if user_is_coowner %}
+      <a href="{% url 'group:co_edit' group_id %}">
+        <button type="button" class="btn btn-sm btn-default">
+          Edit
+        </button>
     </a>
     {% endif %}
     <br>
@@ -21,11 +31,11 @@
       <div class="span12">
         <div class="container-fluid">
           <div class="hero-unit">
-            <div class="container-fluid" style="width:50%;float:left">
+            <div class="container-fluid" style="width:40%;float:left">
               <h4 style="color:gray">Group name</h4>
               <h2>{{ group_name }}</h2>
             </div>
-            <div class="container-fluid" style="width:50%;float:right">
+            <div class="container-fluid" style="width:60%;float:right">
               <div style="float:left; margin-right:70px">
                 <h4 style="color:gray;margin-bottom:30px">Owner</h4>
                 <h3 title="{{owner.email}}">{{ owner }}</h3>
@@ -45,196 +55,264 @@
             </div>
           </div>
         </div>
-        <hr>
-        <div class="container-fluid">
-          <div class="Description" style="float:left">
-            <p style="font-size:16px; color:gray; word-wrap:break-word">
-              {{ group_description }}
-            </p>
-          </div>
-        </div>
       </div>
     </div>
   </div>
   <hr>
-  <div class="contest">
-    <div class="panel-group" id="accordion">
-      <div class="panel panel-success">
-        <div class="panel-heading">
-          <h4 class="panel-title">
-            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Running-Contest</a>
-          </h4>
-        </div>
-        <div id="collapseOne" class="panel-collapse collapse in">
-          <div class="panel-body">
-            <table class="table table-hover table-striped">
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Start Time</th>
-                  <th>End Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for running_contest in rc_list %}
-                  {% if running_contest.is_homework %}
-                    <tr style="background-color:#F1F7EA">
-                      <td>{{ running_contest.cname }}</td>
+  <div class="container-fluid">
+    <div class="Description" style="float:left">
+      <p style="font-size:16px; color:gray; word-wrap:break-word">
+        {{ group_description }}
+      </p>
+    </div>
+  </div>
+  <hr>
+  <div class="col-lg-offset-0 col-lg-12">
+    <div class="contest">
+      <div style="margin-bottom:15px">
+        <h5 style="text-decoration:underline;color:gray">Traced Contest</h5>
+      </div>
+      <div class="panel-group" id="accordion">
+        <div class="panel panel-success">
+          <div class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">Running-Contest</a>
+            </h4>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse in">
+            <div class="panel-body">
+              <table class="table table-hover table-striped">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for running_contest in running_contest_list %}
+                    <tr>
+                      <td>{{ running_contest.id }}</td>
+                      <td>
+                        <a href="{% url 'contest:contest' running_contest.id %}">
+                          {{ running_contest.cname }}
+                        </a>
+                      </td>
                       <td>{{ running_contest.start_time }}</td>
                       <td>{{ running_contest.end_time }}</td>
                     </tr>
-                  {% else %}
-                    <tr style="background-color:#E3E8E3">
-                      <td>{{ running_contest.cname }}</td>
-                      <td>{{ running_contest.start_time }}</td>
-                      <td>{{ running_contest.end_time }}</td>
-                    </tr>
-                  {% endif %}
-                {% endfor %}
-              </tbody>
-            </table>
-            <a class="btn btn-sm btn-default" style="float:right"
-               onclick="window.open('{% url 'group:viewall_contest' group_id %}', '', config='height=500,width=800');">view all</a>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <a class="btn btn-sm btn-default" style="float:right"
+                 onclick="window.open('{% url 'group:viewall_contest' group_id %}', '', config='height=500,width=800');">view all</a>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h4 class="panel-title">
-            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">Ended Contest</a>
-          </h4>
-        </div>
-        <div id="collapseTwo" class="panel-collapse collapse">
-          <div class="panel-body">
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Start Time</th>
-                  <th>End Time</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for ended_contest in ec_list %}
-                  {% if ended_contest.is_homework %}
-                  <tr style="background-color:#D6DBD0">
-                    <td>{{ ended_contest.cname }}</td>
-                    <td>{{ ended_contest.start_time }}</td>
-                    <td>{{ ended_contest.end_time }}</td>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">Ended Contest</a>
+            </h4>
+          </div>
+          <div id="collapseTwo" class="panel-collapse collapse">
+            <div class="panel-body">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
                   </tr>
-                  {% else %}
-                  <tr style="background-color:#C5C9C5">
-                    <td>{{ ended_contest.cname }}</td>
-                    <td>{{ ended_contest.start_time }}</td>
-                    <td>{{ ended_contest.end_time }}</td>
-                  </tr>
-                  {% endif %}
-                {% endfor %}
-              </tbody>
-            </table>
-            <a class="btn btn-sm btn-default" style="float:right"
-               onclick="window.open('{% url 'group:viewall_archive' group_id %}', '', config='height=500,width=800');">view all</a>
+                </thead>
+                <tbody>
+                  {% for ended_contest in ended_contest_list %}
+                    <tr>
+                      <td>{{ended_contest.id}}</td>
+                      <td>
+                        <a href="{% url 'contest:contest' ended_contest.id %}">
+                          {{ ended_contest.cname }}
+                        </a>
+                      </td>
+                      <td>{{ ended_contest.start_time }}</td>
+                      <td>{{ ended_contest.end_time }}</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <a class="btn btn-sm btn-default" style="float:right"
+                 onclick="window.open('{% url 'group:viewall_archive' group_id %}', '', config='height=500,width=800');">view all</a>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <hr>
-  <div class="announce">
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th>Title</th>
-          <th>Content</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for annowence in an_list %}
-        <tr>
-          <td>{{ annowence.title|truncatechars:25 }}</td>
-          <td>{{ annowence.content|truncatechars:70 }}</td>
-          <td>
-            <a href="" class="btn btn-sm btn-default" data-toggle="modal"
-               data-target="#annowenceContentModal{{annowence.id}}"
-               style="float:right">Detail</a>
-            <!--1. Modal for Annowence Detail button-->
-            <div class="modal fade" id="annowenceContentModal{{annowence.id}}"
-                 role="dialog" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="btn-default" class="close" data-dismiss="modal"
-                            aria-hidden="true">&times;</button>
-                    <h5 class="modal-title">{{annowence.title|truncatechars:42}}</h4>
-                  <div class="modal-body">
-                    <p style="word-wrap:break-word">{{ annowence.content }}</p>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">
-                      Close</button>
+    <hr>
+    <div class="announce">
+      <div style="margin-bottom:15px">
+        <h5 style="text-decoration:underline;color:gray">Announce</h5>
+      </div>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Content</th>
+            <th>
+              {% if user_is_owner %}
+                <button type="button" class="btn btn-primary btn-sm" 
+                        data-toggle="modal" style="float:right" 
+                        data-target="#addannounce">
+                  Add announce
+                </button>
+                {% include "group/addAnnounce.html" %}
+              {% endif %}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for announce in announce_list %}
+          <tr>
+            <td>{{ announce.title|truncatechars:25 }}</td>
+            <td>{{ announce.content|truncatechars:70 }}</td>
+            <td>
+              <a href="" class="btn btn-sm btn-default" data-toggle="modal"
+                 data-target="#annowenceContentModal{{annowence.id}}"
+                 style="float:right">Detail</a>
+              <!--1. Modal for Annowence Detail button-->
+              <div class="modal fade" id="annowenceContentModal{{annowence.id}}"
+                   role="dialog" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="btn-default" class="close" data-dismiss="modal"
+                              aria-hidden="true">&times;</button>
+                      <h5 class="modal-title" title="{{announce.title}}">
+                        {{announce.title|truncatechars:42}}
+                      </h5> 
+                    <div class="modal-body">
+                      <p style="word-wrap:break-word">{{ announce.content }}</p>
+                    </div>
+                    <div class="modal-footer">
+                      <div class="col-lg-offset-8 col-lg-1">
+                      {% if user_is_owner %}
+                        <a href="{% url 'group:delete_announce' announce.id group_id %}">
+                        <button type="button" class="btn btn-danger btn-default">Delete
+                        </button>
+                        </a>
+                      {% endif %}
+                      </div>
+                      <div class="col-lg-offset-1 col-lg-1">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">
+                        Close</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    <a class="btn btn-sm btn-default" style="float:right"
-       onclick="window.open('{% url 'group:viewall_announce' group_id %}', '', config='height=500,width=800');">view all</a>
-    <br>
-  </div>
-  <hr>
-  <div class="member">
-    <form action="#" class="navbar-search pull-left" method="get">
-      <input type="text" name="q" class="search-query span10" value=""
-             placeholder="Search..."style="float:left">
-    </form>
-    <div class="btn-group" style="float:right">
-      <a href="#" class="btn btn-default btn-sm">+</a>
-      <a href="#" class="btn btn-defalut dropdown-toggle btn-sm" data-toggle="dropdown">
-        <span class="caret"></span>
-      </a>
-      <ul class="dropdown-menu">
-        <li><a href="#">Add single student</a>
-        </li>
-        <li><a href="#">Add with list</a>
-        </li>
-        <li class="divider"></li>
-        <li><a href="#">Something else</a>
-        </li>
-      </ul>
-      <a href="" class="btn btn-sm btn-default" data-toggle="modal"
-         data-target="#studentDataDownloadModal" style="float:right">Download</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <a class="btn btn-sm btn-default" style="float:right"
+         onclick="window.open('{% url 'group:viewall_announce' group_id %}', '', config='height=500,width=800');">view all</a>
+      <br>
     </div>
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Email</th>
-          <th>Level</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for student in s_list %}
-        <tr>
-          <td>{{ student.username }}</td>
-          {% if student.email == "" %}
-            <td>---</td>
-          {% else %}
-            <td>{{ student.email }}</td>
-          {% endif %}
-          <td>{{ student.user_level }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+    <hr>
+    <div class="member">
+      <div style="margin-bottom:15px">
+        <h5 style="text-decoration:underline;color:gray">Members</h5>
+      </div>
+      <!--
+      <div style="width:20%;float:left" class="input-group">
+        <span class="input-group-addon">
+          <span class="glyphicon glyphicon-search"></span>
+        </span>
+        <input id="search" class="form-control">
+      </div>
+      <form action="#" class="navbar-search pull-left" method="get">
+        <input type="text" name="q" class="search-query span10" value=""
+               placeholder="Search..."style="float:left">
+      </form>
+      <div class="btn-group" style="float:right">
+        <a href="#" class="btn btn-default btn-sm">+</a>
+        <a href="#" class="btn btn-defalut dropdown-toggle btn-sm" data-toggle="dropdown">
+          <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="#">Add single student</a>
+          </li>
+          <li><a href="#">Add with list</a>
+          </li>
+          <li class="divider"></li>
+          <li><a href="#">Something else</a>
+          </li>
+        </ul>
+        <a href="" class="btn btn-sm btn-default" data-toggle="modal"
+           data-target="#studentDataDownloadModal" style="float:right">Download</a>
+      </div>
+      -->
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Level</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for student in student_list %}
+          <tr>
+            <td>{{ student.username }}</td>
+            {% if student.email == "" %}
+              <td>---</td>
+            {% else %}
+              <td>{{ student.email }}</td>
+            {% endif %}
+            <td>{{ student.user_level }}</td>
+            <td>
+              {% if user_is_owner %}
+                <a href="{% url 'group:delete_member' group_id student.username %}">
+                  <button type="button" class="btn btn-danger btn-xs" style="float:right">
+                    <span class="glyphicon glyphicon-remove"></span>
+                  </button>
+                </a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <hr>
+    <div class="container-fluid">
+      <ul class="pager">
+      <span class="step-links">
+        {% if student_list.has_previous %}
+          <li class="previous">
+            <a href="?page={{ student_list.previous_page_number }}">← Previous</a>
+          </li>
+         {% endif %}
+
+        <span class="current">
+          Page {{ student_list.number }} of {{ student_list.paginator.num_pages }}.
+        </span>
+
+        {% if student_list.has_next %}
+          <li class="next">
+            <a href="?page={{ student_list.next_page_number }}">Next →</a>
+          </li>
+        {% endif %}
+      </span>
+      </ul>
+    </div>
   </div>
-  <hr>
   <!--Modal Section-->
   <!--1. Modal for Downloading student data-->
+  <!--
   <div class="modal fade" id="studentDataDownloadModal" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -244,7 +322,7 @@
           <h4 class="modal-title">Download data</h4>
         </div>
         <div class="modal-body">
-          <p>do something</p>
+          <p>Not avalible now</p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">
@@ -254,6 +332,7 @@
       </div>
     </div>
   </div>
+  -->
   <!--Modal Section End-->
 </div>
 {% endblock body_block %}

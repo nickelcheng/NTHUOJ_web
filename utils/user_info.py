@@ -61,14 +61,17 @@ def has_group_ownership(curr_user, curr_group):
 
     if curr_user == curr_group.owner:
         return True
+    return False
 
+def has_group_coownership(curr_user, curr_group):
+    curr_user = validate_user(curr_user)
+    
     group_coowners = curr_group.coowner.all()
     if group_coowners:
         for coowner in group_coowners:
             if curr_user == coowner:
                 return True
     return False
-
 
 def has_problem_ownership(curr_user, curr_problem):
     curr_user = validate_user(curr_user)
@@ -159,7 +162,9 @@ def send_activation_email(request, user):
         reverse('users:confirm', kwargs={'activation_key': activation_key})
     email_subject = 'Account confirmation'
     email_body = render_to_string('index/activation_email.html',
-                    {'username': username, 'activation_link': activation_link})
+                    {'username': username, 'activation_link': activation_link,
+                    'active_time': new_profile.active_time})
+
     msg = EmailMultiAlternatives(email_subject, email_body, EMAIL_HOST_USER, [email])
     msg.attach_alternative(email_body, "text/html")
 

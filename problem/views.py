@@ -117,7 +117,9 @@ def edit(request, pid=None):
                            instance=problem,
                            initial={'owner': request.user.username})
         if form.is_valid():
-            problem = form.save()
+            problem = form.save(commit=False)
+	    if not request.user.has_admin_auth():
+		problem.owner = request.user
             problem.description = request.POST['description']
             problem.input= request.POST['input_description']
             problem.output = request.POST['output_description']
@@ -136,8 +138,8 @@ def edit(request, pid=None):
             logger.info('edit problem, pid = %d by %s' % (problem.pk, request.user))
             logger.info('edit problem, pid = %d' % (problem.pk))
             return redirect('/problem/%d' % (problem.pk))
-    if not request.user.has_admin_auth():
-        del form.fields['owner']
+	else:
+	    print "not valid"
     return render_index(request, 'problem/edit.html',
                             {'form': form, 'pid': pid, 'pname': problem.pname,
                              'tags': tags, 'tag_form': tag_form, 'description': problem.description,

@@ -70,7 +70,7 @@ def detail(request, pid):
     tag_form = TagForm()
     try:
         problem = Problem.objects.get(pk=pid)
-        if not problem.visible or (user != problem.owner or not user.has_admin_auth()):
+        if not problem.visible and user != problem.owner and not user.has_admin_auth():
             raise PermissionDenied()
         last_contest = problem.contest_set.all().order_by('-start_time')
         if len(last_contest) > 0:

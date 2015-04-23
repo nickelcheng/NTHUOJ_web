@@ -70,7 +70,7 @@ def detail(request, pid):
     tag_form = TagForm()
     try:
         problem = Problem.objects.get(pk=pid)
-        if not problem.visible or (user != problem.owner or not user.has_admin_auth()):
+        if not problem.visible and user != problem.owner and not user.has_admin_auth():
             raise PermissionDenied()
         last_contest = problem.contest_set.all().order_by('-start_time')
         if len(last_contest) > 0:
@@ -139,18 +139,18 @@ def edit(request, pid=None):
     if not request.user.has_admin_auth():
         del form.fields['owner']
     return render_index(request, 'problem/edit.html',
-			    {'form': form, 'pid': pid, 'pname': problem.pname,
-			     'tags': tags, 'tag_form': tag_form, 'description': problem.description,
-			     'input': problem.input, 'output': problem.output,
-			     'sample_in': problem.sample_in, 'sample_out': problem.sample_out,
-			     'testcase': testcase,
-			     'path': {
-				 'TESTCASE_PATH': TESTCASE_PATH,
-				 'SPECIAL_PATH': SPECIAL_PATH,
-				 'PARTIAL_PATH': PARTIAL_PATH, },
-			     'has_special_judge_code': has_special_judge_code(problem),
-			     'has_partial_judge_code': has_partial_judge_code(problem),
-			     'file_ex': get_problem_file_extension(problem)})
+                            {'form': form, 'pid': pid, 'pname': problem.pname,
+                             'tags': tags, 'tag_form': tag_form, 'description': problem.description,
+                             'input': problem.input, 'output': problem.output,
+                             'sample_in': problem.sample_in, 'sample_out': problem.sample_out,
+                             'testcase': testcase,
+                             'path': {
+                                 'TESTCASE_PATH': TESTCASE_PATH,
+                                 'SPECIAL_PATH': SPECIAL_PATH,
+                                 'PARTIAL_PATH': PARTIAL_PATH, },
+                             'has_special_judge_code': has_special_judge_code(problem),
+                             'has_partial_judge_code': has_partial_judge_code(problem),
+                             'file_ex': get_problem_file_extension(problem)})
 
 @login_required
 def tag(request, pid):

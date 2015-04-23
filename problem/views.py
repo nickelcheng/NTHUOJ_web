@@ -70,6 +70,8 @@ def detail(request, pid):
     tag_form = TagForm()
     try:
         problem = Problem.objects.get(pk=pid)
+        if problem.visible and (user != problem.owner or not user.is_admin):
+            raise PermissionDenied()
         last_contest = problem.contest_set.all().order_by('-start_time')
         if last_contest.start_time < timezone.now():
             problem.visible = True

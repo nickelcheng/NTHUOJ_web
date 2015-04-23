@@ -1,5 +1,8 @@
 {% extends "index/base.html" %}
 {% load static %}
+{% block title_name %}
+<title>All {{ title }}</title>
+{% endblock title_name %}
 {% block body_block %}
 <br>
 <div class="span12">
@@ -12,53 +15,40 @@
       </div>
     </div>
 <div class="modal-body">
-  <div class="input-group" style="">
-    <span class="input-group-addon">search {{ title }} by id</span>
-    <input type="text" class="form-control" style="width:30%">
-    <button class="btn btn-default btn-sm" type="button" style="float:left">search</button>
-  </div>
   <br>
   <table class="table table-hover">
     <thead>
-      <th>{{ title }} title</th>
-      {% if list_type == "announce" %}
-      <th>announce content</th>
-      {% else %}
-      <th>start time</th>
-      <th>end time</th>
-      {% endif %}
+      <tr>
+        <th>ID</th>
+        <th>title</th>
+        {% if list_type == "announce" %}
+        <th>announce content</th>
+        {% else %}
+        <th>start time</th>
+        <th>end time</th>
+        {% endif %}
+      </tr>
     </thead>
     <tbody>
       {% for archive in data_list %}
       <tr>
+        <td>{{ archive.id }}</td>
         {% if list_type == 'runContest'%}
-          {% if archive.is_homework %}
-            <tr style="background-color:#F1F7EA">
-              <td>{{ archive.cname }}</td>
-              <td>{{ archive.start_time }}</td>
-              <td>{{ archive.end_time }}</td>
-            </tr>
-          {% else %}
-            <tr style="background-color:#E3E8E3">
-              <td>{{ archive.cname }}</td>
-              <td>{{ archive.start_time }}</td>
-              <td>{{ archive.end_time }}</td>
-            </tr>
-          {% endif %}
+          <td>
+            <a href="{% url 'contest:contest' archive.id %}">
+              {{ archive.cname }}
+            </a>
+          </td>
+          <td>{{ archive.start_time }}</td>
+          <td>{{ archive.end_time }}</td>
         {% elif list_type == 'endContest'%}
-          {% if archive.is_homework %}
-            <tr style="background-color:#D6DBD0">
-              <td>{{ archive.cname }}</td>
-              <td>{{ archive.start_time }}</td>
-              <td>{{ archive.end_time }}</td>
-            </tr>
-          {% else %}
-            <tr style="background-color:#C5C9C5">
-              <td>{{ archive.cname }}</td>
-              <td>{{ archive.start_time }}</td>
-              <td>{{ archive.end_time }}</td>
-            </tr>
-          {% endif %}
+          <td>
+            <a href="{% url 'contest:contest' archive.id %}">
+              {{ archive.cname }}
+            </a>
+          </td>
+          <td>{{ archive.start_time }}</td>
+          <td>{{ archive.end_time }}</td>
         {% elif list_type == "announce" %}
         <td>{{ archive.title }}</td>
         <td>{{ archive.content }}</td>
@@ -81,12 +71,6 @@
                     <span class="input-group-addon">Title</span>
                     <input type="text" class="form-control" value="{{ archive.name }}">
                   </div>
-                  <textarea class="form-control input-sm" type="text" style="height:200px;">
-                    {{ archive.content }}</textarea>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                  <button type="button" class="btn btn-primary"> Confirm </button>
                 </div>
               </div>
             </div>
@@ -97,5 +81,18 @@
       {% endfor %}
     </tbody>
   </table>
+  <nav>
+    <ul class="pager">
+      {% if data_list.has_previous %}
+      <li><a href="?page={{ data_list.previous_page_number }}">← Previous</a></li>
+      {% endif %}
+      <span class="current">
+        Page {{ data_list.number }} of {{ data_list.paginator.num_pages }}.
+      </span>
+      {% if data_list.has_next %}
+      <li><a href="?page={{ data_list.next_page_number }}">Next →</a></li>
+      {% endif %}
+    </ul>
+  </nav>
 </div>
 {% endblock body_block %}

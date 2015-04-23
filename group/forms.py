@@ -19,9 +19,17 @@
     '''
 
 from django import forms
-from group.models import Group
+from django.db.models import Q
+from group.models import Group, Announce
+from users.models import User
 
 class GroupForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(GroupForm, self).__init__(*args, **kwargs)
+        # access object through self.instance...
+        self.fields['coowner'].queryset = User.objects.exclude(user_level=User.USER)
+        self.fields['owner'].queryset = User.objects.exclude(user_level=User.USER)
+
     class Meta:
         model = Group
         fields = [
@@ -30,17 +38,46 @@ class GroupForm(forms.ModelForm):
             'coowner',
             'member',
             'description',
-            'announce',
             'trace_contest',
         ]
 
 class GroupFormEdit(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(GroupFormEdit, self).__init__(*args, **kwargs)
+        # access object through self.instance...
+        self.fields['coowner'].queryset = User.objects.exclude(user_level=User.USER)
+        #self.fields['member'].queryset = User.objects.exclude(self.fields['coowner'].queryset)
     class Meta:
         model = Group
         fields = [
+            'gname',
             'coowner',
             'member',
             'description',
-            'announce',
             'trace_contest',
         ]
+
+class Co_GroupFormEdit(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(Co_GroupFormEdit, self).__init__(*args, **kwargs)
+        # access object through self.instance...
+        self.fields['coowner'].queryset = User.objects.exclude(user_level=User.USER)
+    class Meta:
+        model = Group
+        fields = [
+            'member',
+            'description',
+            'trace_contest',
+        ]
+
+class AnnounceForm(forms.ModelForm):
+    class Meta:
+        model = Announce
+        fields = [
+            'title',
+            'content',
+        ]
+        widgets = {
+            'title': forms.TextInput(),
+            'content': forms.Textarea(),
+        }

@@ -25,12 +25,15 @@ $(function() {
   var queries = {};
   $.each(document.location.search.substr(1).split('&'), function(c, q) {
     var i = q.split('=');
-    queries[i[0].toString()] = i[1].toString();
+    try {
+      queries[i[0].toString()] = i[1].toString();
+    } catch (e) {
+      console.log(e);
+    }
   });
   for (q in queries) {
     if (q != 'page') {
-      $('#pagerForm').append('<input type="hidden" name="' + q + '" value="' + queries[q] + '">')
-      console.log(queries[q])
+      $('#pagerForm').append('<input type="hidden" name="' + q + '" value="' + queries[q] + '">');
     }
   }
 })
